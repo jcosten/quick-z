@@ -1,0 +1,29 @@
+#!/bin/bash
+# /etc/init.d/zwave-companion
+
+### BEGIN INIT INFO
+# Provides:          zwave-companion
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       This service is used to manage a servo
+### END INIT INFO
+
+
+case "$1" in 
+    start)
+        echo "Starting Zwave Companion"
+        su pi -c 'node /home/pi/zwaver/server/main.js < /dev/null &'
+        ;;
+    stop)
+        echo "Stopping Zwave Companion"
+        killall node
+        ;;
+    *)
+        echo "Usage: /etc/init.d/zwaver start|stop"
+        exit 1
+        ;;
+esac
+
+exit 0

@@ -1,0 +1,48 @@
+<md-content layout-fill layout-margin>
+    <h1>Devices</h1>
+    <md-whiteframe ng-repeat="node in dvm.nodes" layout-margin>
+        <span class="md-headline">{{node.product}}</span>
+        <span class="md-subhead">{{node.manufacturer}}</span>
+        <md-content ng-repeat="cmdClass in node.classes">
+            <md-content layout="row" layout-padding layout-wrap>
+                <md-content ng-repeat="index in cmdClass" layout-padding layout="row">
+                    <div ng-if="index.genre ==='user'">
+                        <md-switch ng-if="index.type==='bool' && index.read_only === false" ng-model="index.value" ng-change="dvm.sendCmd(index.node_id,index.class_id,index.index,index.value)"
+                        aria-label="Light Switch" ng-true-value="true" ng-false-value="false" class="md-primary">
+                            {{index.label}}
+                        </md-switch>
+                        <div ng-if="(index.type ==='decimal' || index.type=== 'int') && index.read_only === false">
+                            <md-input-container>
+                                <label>{{index.label}} - {{index.units}}</label>
+                                <input ng-model="index.value" ng-change="dvm.sendCmd(index.node_id,index.class_id,index.index,index.value)"
+                                ng-model-options="{ debounce: 1000 }" style="min-width:100px;" />
+                            </md-input-container>
+                        </div>
+                        <span ng-if="index.read_only === true">
+                        <h3>{{index.label}}&nbsp;&nbsp;&nbsp;<span ng-if="index.type !=='bool'">{{index.value}}</span>
+                        <span class="fa-2x" style="color:limegreen;" ng-show="index.value === false"> 
+                                <i class="fa fa-lock"></i>&nbsp;&nbsp;CLOSED
+                        </span>
+                        <span class="fa-2x" style="color:tomato" ng-show="index.value === true">
+                                <i class="fa fa-unlock"></i>&nbsp;&nbsp;OPEN
+                        </span> {{index.units}}
+                        </h3>
+                        <span style="font-size:.7em" ng-show="index.lastupdate">
+                            <i class="fa fa-refresh"></i>&nbsp;{{index.lastupdate | date:'EEEE h:mm:ss a'}}
+                        </span>
+                        </span>
+                        <div layout ng-if="index.type === 'byte' && index.read_only === false">
+                            <md-slider min="0" max="99" ng-model-options="{ debounce: 500 }" ng-change="dvm.sendCmd(index.node_id,index.class_id,index.index,index.value)"
+                            ng-model="index.value" aria-label="{{index.label}}" class="md-primary" style="min-width:250px;">
+                            </md-slider>
+                        </div>
+                        <select ng-if="index.type ==='list' && index.read_only === false" ng-model="index.value" aria-label="{{index.label}}"
+                        ng-change="dvm.sendCmd(index.node_id,index.class_id,index.index,index.value)">
+                            <option ng-value="opt" ng-repeat="opt in index.values">{{opt}}</option>
+                        </select>
+                    </div>
+                </md-content>
+            </md-content>
+        </md-content>
+    </md-whiteframe>
+</md-content>
